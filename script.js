@@ -19,12 +19,24 @@ function setup() {
 }
 
 function draw() {
-    image(img, 0, 0, 640, 420)
-    fill(255, 0, 0);
-    text("Dog", 45, 75)
-    noFill()
-    stroke(255, 0, 0)
-    rect(30, 60, 450, 350)
+    image(img, 0, 0);
+    if(modelStatus) {
+        for(let i = 0; i < objects.length; i++) {
+            document.getElementById("status").innerHTML = "Status: objeto detectado";
+            let obj = objects[i];
+            fill("red");
+            textSize(16);
+            text(
+                `${obj.label} ${floor(obj.confidence * 100)}%`,
+                obj.x + 5,
+                obj.y + 15
+            );
+            noFill();
+            stroke("red");
+            strokeWeight(2)
+            rect(obj.x, obj.y, obj.width, obj.height)
+        }
+    }
 }
 
 function modelLoaded() {
@@ -33,6 +45,10 @@ function modelLoaded() {
     objectDetector.detect(img, gotResult);
 }
 
-function gotResult() {
-    
+function gotResult(error, results) {
+    if (error) {
+        console.error(error);
+        return;
+    }
+    objects = results;
 }
